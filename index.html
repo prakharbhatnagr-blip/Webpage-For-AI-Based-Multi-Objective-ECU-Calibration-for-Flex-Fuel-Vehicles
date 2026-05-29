@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FlexMind AI ECU calibration demo by Prakhar Bhatnagar.">
+  <title>FlexMind AI ECU - Prakhar Bhatnagar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=cursor-reactive">
+</head>
+<body>
+  <div id="preloader" class="preloader">
+    <div class="cluster" id="boot-cluster" aria-label="ECU startup gauge sweep">
+      <div class="analog-meter speedometer">
+        <div class="meter-ticks" aria-hidden="true">
+          <span style="--i:0"></span><span style="--i:1"></span><span style="--i:2"></span><span style="--i:3"></span><span style="--i:4"></span>
+          <span style="--i:5"></span><span style="--i:6"></span><span style="--i:7"></span><span style="--i:8"></span>
+        </div>
+        <div class="meter-number n0">0</div>
+        <div class="meter-number n1">80</div>
+        <div class="meter-number n2">160</div>
+        <div class="meter-number n3">240</div>
+        <div class="meter-needle"></div>
+        <div class="meter-hub"></div>
+        <div class="meter-readout"><span>Speed</span><strong id="speed-read">000</strong><small>km/h</small></div>
+      </div>
+
+      <div class="analog-meter tachometer">
+        <div class="meter-ticks" aria-hidden="true">
+          <span style="--i:0"></span><span style="--i:1"></span><span style="--i:2"></span><span style="--i:3"></span><span style="--i:4"></span>
+          <span style="--i:5"></span><span style="--i:6"></span><span style="--i:7"></span><span style="--i:8"></span>
+        </div>
+        <div class="meter-number n0">0</div>
+        <div class="meter-number n1">3</div>
+        <div class="meter-number n2">6</div>
+        <div class="meter-number n3">9</div>
+        <div class="meter-needle"></div>
+        <div class="meter-hub"></div>
+        <div class="meter-readout"><span>RPM</span><strong id="rpm-boot-read">0.0</strong><small>x1000</small></div>
+      </div>
+
+      <div class="cluster-status">
+        <span>FlexMind ECU self-test</span>
+        <strong id="preload-number">0%</strong>
+      </div>
+    </div>
+    <p id="preload-message">Initializing ECU neural layer</p>
+  </div>
+
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+  <div class="cursor-spotlight" id="cursor-spotlight"></div>
+
+  <header class="nav" id="nav">
+    <a class="logo" href="#top">Flex<span>Mind</span></a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#cars">Cars</a>
+      <a href="#e30">E30</a>
+      <a href="#paper">Paper</a>
+      <a href="#method">Method</a>
+      <a href="#framework">Framework</a>
+      <a href="#simulator">Simulator</a>
+      <a href="#references">Refs</a>
+    </nav>
+    <a class="nav-cta" href="#simulator">Run Simulation</a>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="kicker">// IEEE Research - MUJ - Dept. IT</p>
+        <h1>AI <span>Multi</span> Objective ECU</h1>
+        <div class="meta-list">
+          <p>Prakhar Bhatnagar</p>
+          <p>Guided by Dr. N. N. Das</p>
+          <p>Random Forest Surrogate + Pareto Optimization</p>
+        </div>
+        <p class="hero-body">
+          Surrogate ML models for adaptive dual-fuel ECU calibration. The demo balances BSFC, NOx, ethanol blend, load, timing, pressure, EGR, and boost into a single presentation-ready cockpit.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-solid" href="#simulator">Live Simulation</a>
+          <a class="button button-ghost" href="#paper">Read Paper</a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1400&q=85" alt="Performance car in a dark studio">
+        <div class="media-badge">
+          <strong>700+</strong>
+          <span>HP on E85</span>
+        </div>
+      </div>
+      <div class="hero-strip">
+        <article><strong>1463</strong><span>Engine samples</span></article>
+        <article><strong>13</strong><span>Input features</span></article>
+        <article><strong>2</strong><span>Surrogate targets</span></article>
+        <article><strong>E0-E100</strong><span>Blend range</span></article>
+        <article><strong>Pareto</strong><span>Trade-off search</span></article>
+      </div>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>Flex fuel ECU calibration</span><span>Random forest surrogate models</span><span>BSFC and NOx optimization</span><span>India E20 transition</span><span>Edge AI inference</span>
+        <span>Flex fuel ECU calibration</span><span>Random forest surrogate models</span><span>BSFC and NOx optimization</span><span>India E20 transition</span><span>Edge AI inference</span>
+      </div>
+    </div>
+
+    <section id="problem" class="section problem">
+      <div class="section-head reveal">
+        <p class="kicker">// Why this project exists</p>
+        <h2>The ECU Problem Is No Longer Just Fueling</h2>
+        <p>When petrol quality, ethanol percentage, temperature, load, and emissions limits all move at once, a static lookup-table ECU becomes a compromise. FlexMind turns calibration into a live decision problem.</p>
+      </div>
+      <div class="problem-grid">
+        <article class="problem-lead reveal">
+          <span>Static Maps</span>
+          <strong>Traditional ECUs are calibrated for known conditions.</strong>
+          <p>They use tables generated through dyno testing. That works when fuel is predictable, but India is moving through E10, E20, and now standards beyond E20. A fixed map cannot elegantly handle every blend, region, driving style, and engine state.</p>
+        </article>
+        <article class="reveal">
+          <span>Blend Variability</span>
+          <strong>Ethanol changes the combustion equation.</strong>
+          <p>Higher ethanol means lower energy density, different stoichiometric AFR, higher latent heat, and higher octane potential. The ECU has to adjust fueling and timing without hurting drivability.</p>
+        </article>
+        <article class="reveal">
+          <span>Emissions Pressure</span>
+          <strong>NOx control fights efficiency.</strong>
+          <p>Reducing NOx usually means EGR and conservative combustion temperatures. That can increase BSFC. The project therefore treats ECU tuning as a multi-objective trade-off, not a single-number target.</p>
+        </article>
+        <article class="reveal">
+          <span>Live Feedback</span>
+          <strong>The vehicle already knows more than old maps use.</strong>
+          <p>Load, pressure, temperature, blend, stability, and emissions signals can become a closed-loop calibration layer. FlexMind uses these signals to choose a safer, cleaner operating point.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="journey" class="section journey">
+      <div class="section-head reveal">
+        <p class="kicker">// Demonstration story</p>
+        <h2>How To Present The Website</h2>
+        <p>The page is built like a viva/demo flow. Start with policy pressure, show common Indian cars, explain E30 expectations, prove the ML method, then end with the live optimizer.</p>
+      </div>
+      <div class="journey-rail">
+        <article class="reveal"><span>01</span><strong>Context</strong><p>India is moving toward higher ethanol blending. This creates compatibility and calibration questions for everyday petrol vehicles.</p></article>
+        <article class="reveal"><span>02</span><strong>Problem</strong><p>Fuel blend changes affect AFR, combustion temperature, knock margin, BSFC, NOx, and startup behavior.</p></article>
+        <article class="reveal"><span>03</span><strong>Method</strong><p>Use surrogate models to predict BSFC and NOx from live engine features, avoiding slow physical testing for every point.</p></article>
+        <article class="reveal"><span>04</span><strong>Optimizer</strong><p>Search ECU settings and select a Pareto-aware operating point that balances fuel efficiency and emissions.</p></article>
+        <article class="reveal"><span>05</span><strong>Impact</strong><p>Show how adaptive calibration prepares vehicles for E20/E30 fuel variation without relying only on static maps.</p></article>
+      </div>
+    </section>
+
+    <section id="cars" class="section cars">
+      <div class="section-head reveal">
+        <p class="kicker">// Common Indian platforms</p>
+        <h2>Cars India Will Actually See</h2>
+        <p>Instead of exotic builds, this section shows familiar Indian roads: hatchbacks and SUVs that make ethanol compatibility, calibration strategy, and ECU adaptation feel immediately relevant.</p>
+      </div>
+      <div class="car-grid reveal">
+        <article class="car-card car-large">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Maruti%20Suzuki%20Swift%204456.JPG" alt="Maruti Suzuki Swift">
+          <div><span>Mass-market hatchback</span><strong>Maruti Suzuki Swift</strong><small>One of India's most familiar petrol hatchbacks - higher ethanol blends need blend-aware fueling and material compatibility.</small></div>
+        </article>
+        <article class="car-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hyundai%20Creta%20India.jpg" alt="Hyundai Creta in India">
+          <div><span>Popular compact SUV</span><strong>Hyundai Creta</strong><small>High-volume Indian SUV segment - E30 transition would make ECU calibration consistency critical across city and highway use.</small></div>
+        </article>
+        <article class="car-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Tata%20Nexon%20Blue%20Dual%20Tone.jpg" alt="Tata Nexon">
+          <div><span>Indian compact SUV</span><strong>Tata Nexon</strong><small>A common Indian petrol SUV case study - blend changes affect cold start, fuel trims, and drivability calibration.</small></div>
+        </article>
+        <article class="car-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/2021%20Mahindra%20XUV700%202.2%20AX7%20%28India%29%20front%20view.png" alt="Mahindra XUV700">
+          <div><span>Indian mid-size SUV</span><strong>Mahindra XUV700</strong><small>Representative of larger Indian family SUVs - future higher blends need validated maps, sensors, and safeguards.</small></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="e30" class="section e30">
+      <div class="section-head reveal">
+        <p class="kicker">// India ethanol roadmap</p>
+        <h2>E30 Is The Next Big Calibration Test</h2>
+        <p>India's current ethanol transition is centered on E20, but the next policy direction is already visible: BIS has notified fuel-quality standards for E22, E25, E27, and E30 blends. That does not mean E30 is at every pump tomorrow, but it does mean vehicles and ECUs need to be prepared for blends beyond E20.</p>
+      </div>
+      <div class="e30-grid">
+        <article class="reveal">
+          <span>01</span>
+          <strong>Lower energy per litre</strong>
+          <p>E30 contains more ethanol, so the ECU must inject more fuel for the same torque demand. Without compensation, fuel economy and drivability can feel inconsistent.</p>
+        </article>
+        <article class="reveal">
+          <span>02</span>
+          <strong>Higher octane potential</strong>
+          <p>More ethanol can support more knock resistance, which gives calibrated engines room for cleaner timing, better response, or higher compression strategies.</p>
+        </article>
+        <article class="reveal">
+          <span>03</span>
+          <strong>Cold-start sensitivity</strong>
+          <p>Ethanol vaporizes differently from petrol, so startup enrichment and transient fueling become more important, especially across Indian winter regions.</p>
+        </article>
+        <article class="reveal">
+          <span>04</span>
+          <strong>Material compatibility</strong>
+          <p>Fuel lines, seals, pumps, injectors, and tanks need compatibility validation as blend percentage rises. Calibration alone is not the whole story.</p>
+        </article>
+        <article class="reveal">
+          <span>05</span>
+          <strong>Live feedback matters</strong>
+          <p>This is where FlexMind fits: ethanol blend, load, combustion stability, and emissions feedback can update the ECU strategy instead of relying on one static map.</p>
+        </article>
+        <article class="reveal">
+          <span>06</span>
+          <strong>Clear consumer expectation</strong>
+          <p>Drivers should expect a phased rollout, model-year differences, compatibility labels, and tuning updates before E30 becomes a normal fuel choice.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="expect" class="section expect">
+      <div class="section-head reveal">
+        <p class="kicker">// What E30 changes in real vehicles</p>
+        <h2>What Drivers And Engineers Should Expect</h2>
+        <p>E30 is not just "more ethanol." It changes how the fuel behaves in the tank, injector, intake, combustion chamber, catalyst, and warranty ecosystem. This is where adaptive calibration becomes useful.</p>
+      </div>
+      <div class="expect-layout">
+        <div class="expect-meter reveal">
+          <div class="blend-stack">
+            <span style="--h:32%">E10</span>
+            <span style="--h:48%">E20</span>
+            <span style="--h:64%">E30</span>
+            <span style="--h:86%">Flex</span>
+          </div>
+          <strong>E30</strong>
+          <p>30% ethanol + 70% petrol</p>
+        </div>
+        <div class="expect-copy reveal">
+          <article><span>Fuel economy</span><p>Expect some reduction in km/l if the engine is not optimized for the blend, because ethanol has lower volumetric energy content than petrol.</p></article>
+          <article><span>Performance tuning</span><p>The higher octane opportunity is real, but only engines calibrated for it can use that margin safely through timing, compression, and boost strategy.</p></article>
+          <article><span>Compatibility</span><p>Older vehicles may need attention to elastomers, fuel pumps, injectors, tank coatings, and calibration updates. Newer models need clear compatibility labels.</p></article>
+          <article><span>Service ecosystem</span><p>Workshops will need scan tools, blend diagnostics, fuel-trim interpretation, and update procedures for model-specific ECU maps.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="paper" class="section paper">
+      <div class="paper-copy reveal">
+        <p class="kicker">// Research paper abstract</p>
+        <h2>The Paper</h2>
+        <p>
+          Conventional ECUs rely on static calibration maps generated through expensive dynamometer testing. FlexMind reframes the ECU as an adaptive decision layer: live engine parameters feed surrogate ML models, and the optimizer chooses control settings that balance fuel efficiency and emissions.
+        </p>
+        <p>
+          The project uses Random Forest regression to estimate BSFC and NOx emissions from live dual-fuel operating conditions, then performs single-objective and multi-objective search across injection timing, fuel pressure, EGR rate, and boost pressure.
+        </p>
+        <div class="tag-list">
+        <span>ECU optimization</span><span>Flex fuel</span><span>Random forest</span><span>BSFC</span><span>NOx</span><span>E20 to E30 readiness</span><span>Pareto front</span><span>Dual-fuel ICE</span>
+        </div>
+      </div>
+      <div class="metric-stack reveal">
+        <article><span>Dataset</span><strong>1463</strong><small>dual-fuel samples</small></article>
+        <article><span>Features</span><strong>13</strong><small>engine inputs</small></article>
+        <article><span>Controls</span><strong>4</strong><small>ECU parameters</small></article>
+        <article><span>Targets</span><strong>BSFC + NOx</strong><small>multi-objective output</small></article>
+      </div>
+    </section>
+
+    <section id="method" class="section method">
+      <div class="section-head reveal">
+        <p class="kicker">// Methodology</p>
+        <h2>From Engine Data To ECU Command</h2>
+        <p>The project is structured as an engineering pipeline: collect operating data, train surrogate models, validate predictions, search ECU control space, and choose the best trade-off for the current engine state.</p>
+      </div>
+      <div class="method-grid">
+        <article class="reveal"><span>01</span><strong>Data ingestion</strong><p>Load the dual-fuel dataset with engine load, fuel shares, timing, pressure, EGR, boost, temperatures, combustion pressure, duration, stability, BSFC, and emissions.</p></article>
+        <article class="reveal"><span>02</span><strong>Preprocessing</strong><p>Encode combustion mode, handle missing values through imputation, and isolate model input features from output targets.</p></article>
+        <article class="reveal"><span>03</span><strong>Surrogate modelling</strong><p>Train Random Forest regressors for BSFC and NOx. These models approximate engine response without running a physical dyno test for every ECU setting.</p></article>
+        <article class="reveal"><span>04</span><strong>Validation</strong><p>Use K-fold validation and actual-vs-predicted plots to check whether the model generalizes beyond memorizing the dataset.</p></article>
+        <article class="reveal"><span>05</span><strong>Optimization</strong><p>Search injection timing, fuel pressure, EGR rate, and boost pressure across feasible bounds while holding operating context fixed.</p></article>
+        <article class="reveal"><span>06</span><strong>Pareto decision</strong><p>Use weighted scalarization to move along the BSFC-NOx front, letting the ECU choose efficiency-biased, emissions-biased, or balanced control.</p></article>
+      </div>
+    </section>
+
+    <section id="dataset" class="section dataset">
+      <div class="section-head reveal">
+        <p class="kicker">// Dataset anatomy</p>
+        <h2>What The Model Actually Sees</h2>
+        <p>The website now makes the dataset legible for non-coders: operating condition, fuel composition, ECU command, combustion feedback, and target outputs.</p>
+      </div>
+      <div class="dataset-grid">
+        <article class="reveal">
+          <span>Operating state</span>
+          <strong>Engine_Load_Percent</strong>
+          <p>Represents how hard the engine is being asked to work. Load strongly affects fuel consumption, cylinder pressure, and emissions formation.</p>
+        </article>
+        <article class="reveal">
+          <span>Fuel composition</span>
+          <strong>Diesel / Gasoline Share</strong>
+          <p>Captures the dual-fuel energy split. For ethanol roadmap discussions, this is the conceptual slot where blend composition matters.</p>
+        </article>
+        <article class="reveal">
+          <span>ECU actuation</span>
+          <strong>Timing, Pressure, EGR, Boost</strong>
+          <p>These are the levers the optimizer can change to influence efficiency, emissions, stability, and performance.</p>
+        </article>
+        <article class="reveal">
+          <span>Combustion feedback</span>
+          <strong>Pressure, Duration, Stability</strong>
+          <p>These signals tell the ECU whether combustion is fast, slow, stable, harsh, or drifting from the expected operating envelope.</p>
+        </article>
+        <article class="reveal">
+          <span>Model targets</span>
+          <strong>BSFC + NOx</strong>
+          <p>BSFC measures fuel efficiency. NOx captures a critical emissions constraint. The project optimizes both together.</p>
+        </article>
+        <article class="reveal">
+          <span>Decision score</span>
+          <strong>Target_Score</strong>
+          <p>A compact indicator of whether the operating point is desirable after considering multiple combustion and emissions factors.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="loop" class="section loop">
+      <div class="section-head reveal">
+        <p class="kicker">// Live feedback loop</p>
+        <h2>What “Live Engine Feedback” Means Here</h2>
+        <p>Live feedback is not a future promise in this concept. It is the core control idea: the ECU continuously reads sensor state, predicts outcomes, and updates commands inside a protected safety envelope.</p>
+      </div>
+      <div class="loop-grid">
+        <article class="reveal"><span>Sense</span><strong>Read current state</strong><p>Blend estimate, engine load, intake temperature, boost pressure, combustion stability, and emissions indicators.</p></article>
+        <article class="reveal"><span>Predict</span><strong>Estimate BSFC and NOx</strong><p>Surrogate models predict what will happen if the ECU uses a candidate control setting.</p></article>
+        <article class="reveal"><span>Optimize</span><strong>Search feasible commands</strong><p>The optimizer compares candidate timing, pressure, EGR, and boost settings under the current operating condition.</p></article>
+        <article class="reveal"><span>Protect</span><strong>Apply safety envelope</strong><p>Hard limits prevent unsafe knock, over-temperature, excessive cylinder pressure, or actuator saturation.</p></article>
+        <article class="reveal"><span>Act</span><strong>Send ECU command</strong><p>The selected command updates the combustion event while the next sensor frame is already being read.</p></article>
+      </div>
+    </section>
+
+    <section id="framework" class="section framework">
+      <div class="section-head reveal">
+        <p class="kicker">// System architecture</p>
+        <h2>Three-Layer AI Framework</h2>
+        <p>Live engine feedback feeds dual surrogate inference, predictions enter the optimizer, and calibrated outputs return to the ECU control layer.</p>
+      </div>
+      <canvas id="framework-canvas" class="wide-canvas reveal" height="420"></canvas>
+    </section>
+
+    <section id="comparison" class="section comparison">
+      <div class="section-head reveal">
+        <p class="kicker">// Traditional ECU vs FlexMind</p>
+        <h2>Why Adaptive Control Is The Upgrade</h2>
+      </div>
+      <div class="compare-grid">
+        <article class="reveal">
+          <span>Static ECU</span>
+          <ul>
+            <li>Lookup tables built offline</li>
+            <li>Limited response to blend variation</li>
+            <li>Calibration work grows with every new fuel</li>
+            <li>Trade-offs hidden inside fixed maps</li>
+            <li>Harder to personalize for region, climate, and usage</li>
+          </ul>
+        </article>
+        <article class="reveal">
+          <span>FlexMind ECU</span>
+          <ul>
+            <li>Predictive surrogate models</li>
+            <li>Live feedback aware control</li>
+            <li>Searches feasible ECU settings in real time</li>
+            <li>Makes BSFC-NOx trade-off explicit</li>
+            <li>Can support E20/E30 readiness through calibration updates</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="results" class="section results">
+      <div class="section-head reveal">
+        <p class="kicker">// Experimental results</p>
+        <h2>Model Performance</h2>
+        <p>The site includes your actual generated research figures so the frontend has substance behind the cinematic layer.</p>
+      </div>
+      <div class="result-grid">
+        <a class="result-card result-large reveal" href="fig_pareto_front.png" target="_blank" rel="noreferrer">
+          <img src="fig_pareto_front.png" alt="Pareto front showing BSFC versus NOx">
+          <div><span>Pareto front</span><strong>BSFC-NOx trade-off</strong></div>
+        </a>
+        <a class="result-card reveal" href="fig_importance_bsfc.png" target="_blank" rel="noreferrer">
+          <img src="fig_importance_bsfc.png" alt="BSFC feature importance">
+          <div><span>Feature importance</span><strong>BSFC model</strong></div>
+        </a>
+        <a class="result-card reveal" href="fig_importance_nox.png" target="_blank" rel="noreferrer">
+          <img src="fig_importance_nox.png" alt="NOx feature importance">
+          <div><span>Feature importance</span><strong>NOx model</strong></div>
+        </a>
+        <a class="result-card reveal" href="fig_avp_bsfc.png" target="_blank" rel="noreferrer">
+          <img src="fig_avp_bsfc.png" alt="Actual versus predicted BSFC">
+          <div><span>Validation</span><strong>Actual vs predicted BSFC</strong></div>
+        </a>
+        <a class="result-card reveal" href="fig_avp_nox.png" target="_blank" rel="noreferrer">
+          <img src="fig_avp_nox.png" alt="Actual versus predicted NOx">
+          <div><span>Validation</span><strong>Actual vs predicted NOx</strong></div>
+        </a>
+      </div>
+    </section>
+
+    <section id="insights" class="section insights">
+      <div class="section-head reveal">
+        <p class="kicker">// How to read the results</p>
+        <h2>What The Figures Prove</h2>
+        <p>The figures are not decoration. They answer the examiner's main questions: does the model learn, which features matter, and how does the optimizer expose the emissions-efficiency trade-off?</p>
+      </div>
+      <div class="insight-grid">
+        <article class="reveal"><span>Actual vs predicted</span><strong>Validation behavior</strong><p>If the points stay close to the ideal line, the surrogate model is tracking the target. Deviations show where engine behavior is harder to approximate.</p></article>
+        <article class="reveal"><span>Feature importance</span><strong>Model reasoning</strong><p>Importance plots identify whether the model is using physically meaningful variables rather than arbitrary noise.</p></article>
+        <article class="reveal"><span>Pareto front</span><strong>Engineering choice</strong><p>The Pareto curve makes the trade-off visible: lower fuel consumption and lower NOx are not always achieved at the same point.</p></article>
+      </div>
+    </section>
+
+    <section class="image-break">
+      <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=1600&q=85" alt="Engine bay">
+      <div class="image-break-copy reveal">
+        <p class="kicker">// Sensor layer</p>
+        <h2>Real-Time Blend Aware Control</h2>
+        <p>Blend ratio, load, combustion behavior, temperature, EGR, and boost become live inputs. The AI layer turns them into an operating point instead of relying on a rigid lookup table.</p>
+      </div>
+    </section>
+
+    <section id="simulator" class="section simulator">
+      <div class="section-head reveal">
+        <p class="kicker">// Live interactive</p>
+        <h2>AI ECU Optimizer</h2>
+        <p>Adjust the controls and watch the heat map respond. The white marker shows the frontend optimizer's current recommended ignition timing and operating point.</p>
+      </div>
+      <div class="sim-layout reveal">
+        <div class="sim-canvas-wrap">
+          <canvas id="sim-canvas" height="430"></canvas>
+          <p>NOx heat map - injection timing on x-axis, engine load on y-axis.</p>
+        </div>
+        <aside class="sim-controls">
+          <label><span>Ethanol blend</span><output id="ethanol-out">E20</output><input id="ethanol" type="range" min="0" max="100" value="20"></label>
+          <label><span>Engine RPM</span><output id="rpm-out">3000</output><input id="rpm" type="range" min="800" max="7500" step="100" value="3000"></label>
+          <label><span>Engine load</span><output id="load-out">60%</output><input id="load" type="range" min="0" max="100" value="60"></label>
+          <label><span>EGR rate</span><output id="egr-out">15%</output><input id="egr" type="range" min="0" max="40" value="15"></label>
+          <label><span>BSFC weight</span><output id="weight-out">0.50</output><input id="weight" type="range" min="0" max="100" value="50"></label>
+          <div class="readouts">
+            <article><span>Ignition advance</span><strong id="timing-read">26.4 deg</strong></article>
+            <article><span>Predicted NOx</span><strong id="nox-read">1.24 g/kWh</strong></article>
+            <article><span>Predicted BSFC</span><strong id="bsfc-read">248.6 g/kWh</strong></article>
+            <article><span>Objective J</span><strong id="objective-read">125.8</strong></article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="demo-script" class="section demo-script">
+      <div class="section-head reveal">
+        <p class="kicker">// Presentation script</p>
+        <h2>Three-Minute Demo Flow</h2>
+        <p>Use this section when presenting live. It gives you a polished sequence so the site feels intentional, not just visually impressive.</p>
+      </div>
+      <div class="script-grid">
+        <article class="reveal"><span>00:00</span><strong>Set context</strong><p>India is moving through E20 and preparing standards beyond E20. Common vehicles will need better blend-aware calibration.</p></article>
+        <article class="reveal"><span>00:30</span><strong>Show the problem</strong><p>Explain that ethanol changes energy density, octane, cold start, and emissions behavior. Static maps struggle with this variation.</p></article>
+        <article class="reveal"><span>01:10</span><strong>Explain the model</strong><p>Describe the Random Forest surrogate models for BSFC and NOx and why surrogate modelling reduces dyno burden.</p></article>
+        <article class="reveal"><span>01:50</span><strong>Open simulator</strong><p>Move ethanol, load, EGR, and weight sliders. Show how the recommended timing, NOx, BSFC, and objective score change.</p></article>
+        <article class="reveal"><span>02:30</span><strong>Close with impact</strong><p>Emphasize live feedback, safety envelope, HIL validation, and E30 readiness as the path from research to deployment.</p></article>
+      </div>
+    </section>
+
+    <section id="future" class="section future">
+      <div class="section-head reveal">
+        <p class="kicker">// Research roadmap</p>
+        <h2>Future Scope</h2>
+      </div>
+      <div class="future-grid">
+        <article class="reveal"><span>01</span><strong>Closed-loop safety envelope</strong><p>Add hard constraints for knock, exhaust temperature, cylinder pressure, and actuator limits around the existing live-feedback loop.</p></article>
+        <article class="reveal"><span>02</span><strong>Embedded edge deployment</strong><p>Compress the trained surrogate models for deterministic ECU firmware inference without cloud dependency.</p></article>
+        <article class="reveal"><span>03</span><strong>Hardware-in-the-loop validation</strong><p>Run repeatable HIL tests before road trials to verify transient response, fallback modes, and emissions compliance.</p></article>
+        <article class="reveal"><span>04</span><strong>Dyno calibration expansion</strong><p>Collect richer load, RPM, temperature, and ethanol-blend data to improve the BSFC model where nonlinear behavior is strongest.</p></article>
+        <article class="reveal"><span>05</span><strong>Driver mode profiles</strong><p>Expose economy, balanced, and performance calibrations while keeping the same emissions and engine-protection boundaries.</p></article>
+        <article class="reveal"><span>06</span><strong>Explainable calibration reports</strong><p>Generate engineer-readable summaries showing why the ECU selected timing, pressure, EGR, and boost at each operating point.</p></article>
+      </div>
+    </section>
+
+    <section id="faq" class="section faq">
+      <div class="section-head reveal">
+        <p class="kicker">// Examiner questions</p>
+        <h2>Questions This Project Is Ready To Answer</h2>
+      </div>
+      <div class="faq-grid">
+        <article class="reveal"><strong>Why Random Forest?</strong><p>It handles nonlinear feature interactions well, works with tabular engineering data, gives feature importance, and is practical for surrogate modelling.</p></article>
+        <article class="reveal"><strong>Why multi-objective optimization?</strong><p>Because fuel efficiency, emissions, performance, and stability are coupled. Optimizing only BSFC can push emissions in the wrong direction.</p></article>
+        <article class="reveal"><strong>How is this related to E30?</strong><p>E30 increases blend variability and calibration demand. The same adaptive approach can help ECUs respond to fuel composition changes.</p></article>
+        <article class="reveal"><strong>What is still needed for real deployment?</strong><p>HIL testing, dyno validation, embedded inference optimization, safety limits, and manufacturer-specific compatibility testing.</p></article>
+      </div>
+    </section>
+
+    <section id="references" class="section references">
+      <div class="section-head reveal">
+        <p class="kicker">// References and artifacts</p>
+        <h2>Data, Code, Papers And Sources Used</h2>
+        <p>This demo is backed by the local project files in the workspace plus public policy references for India's ethanol-blending roadmap. These references make it clear which parts are model outputs, which parts are policy context, and which parts are frontend demonstration logic.</p>
+      </div>
+      <div class="reference-grid">
+        <article class="reveal">
+          <span>Dataset</span>
+          <strong>Dual-fuel engine dataset</strong>
+          <ul>
+            <li><code>dual_fuel_engine_dataset.csv</code> - primary 1463-row engine dataset used by the calibration pipeline.</li>
+            <li><code>dual_fuel_engine_dataset_categorical.csv</code> - categorical companion dataset.</li>
+            <li>Core fields include engine load, fuel energy shares, injection timing, fuel pressure, EGR, boost, temperature, equivalence ratio, cylinder pressure, combustion duration, combustion stability, BSFC, NOx, and target score.</li>
+          </ul>
+        </article>
+
+        <article class="reveal">
+          <span>Code</span>
+          <strong>Model and inference scripts</strong>
+          <ul>
+            <li><code>Final Paper Code.py</code> - full training, validation, optimization, feature-importance, and Pareto-front pipeline.</li>
+            <li><code>ecu_inference.py</code> - example BSFC model inference workflow.</li>
+            <li><code>bsfc_ecu_model.pkl</code> - saved trained BSFC model artifact.</li>
+            <li><code># flexfuel_ml_pipeline.py</code> - additional ML pipeline file in the project workspace.</li>
+          </ul>
+        </article>
+
+        <article class="reveal">
+          <span>Generated figures</span>
+          <strong>Results used inside this website</strong>
+          <ul>
+            <li><code>fig_pareto_front.png</code> - BSFC-NOx Pareto trade-off.</li>
+            <li><code>fig_importance_bsfc.png</code> and <code>fig_importance_nox.png</code> - feature-importance plots.</li>
+            <li><code>fig_avp_bsfc.png</code> and <code>fig_avp_nox.png</code> - actual-vs-predicted validation plots.</li>
+            <li><code>fig_distributions.png</code> - BSFC and NOx target distributions.</li>
+          </ul>
+        </article>
+
+        <article class="reveal">
+          <span>Project papers</span>
+          <strong>Local research drafts and references</strong>
+          <ul>
+            <li><code>IEEE_submission_ready_paper.pdf</code> - IEEE-ready paper export.</li>
+            <li><code>Final Draft of Ppaer.docx</code> and <code>K_N_MR_ECOAI (1) - Copy IEE Format.docx</code> - paper drafts.</li>
+            <li><code>AI Flex Fuel ECU Optimization_.docx</code>, <code>AI Integration Ideas.docx</code>, and <code>Flex-Fuel Ideas.docx</code> - ideation and concept notes.</li>
+            <li><code>Reference.pdf</code>, <code>Research paper 1.pdf</code>, <code>RP2.pdf</code>, and <code>RP - AI in ICE Sustainalble energy transition.pdf</code> - supporting reference material.</li>
+          </ul>
+        </article>
+
+        <article class="reveal">
+          <span>Policy context</span>
+          <strong>India ethanol-blending roadmap</strong>
+          <ul>
+            <li><a href="https://www.iea.org/policies/17007-roadmap-for-ethanol-blending-in-india-2020-25" target="_blank" rel="noreferrer">IEA policy summary: Roadmap for Ethanol Blending in India 2020-25</a>.</li>
+            <li><a href="https://www.niti.gov.in/sites/default/files/2023-02/EthanolBlendingInIndia_compressed.pdf" target="_blank" rel="noreferrer">NITI Aayog / Government of India roadmap PDF for ethanol blending</a>.</li>
+            <li><a href="https://www.autocarindia.com/industry-amp/government-notifies-standards-for-petrol-blends-beyond-e20-439772" target="_blank" rel="noreferrer">Autocar India report on E22, E25, E27, and E30 standards</a>.</li>
+            <li><a href="https://www.moneycontrol.com/news/business/india-moves-beyond-e20-government-notifies-e30-petrol-standards-13924198.html" target="_blank" rel="noreferrer">Moneycontrol report on BIS E22-E30 fuel norms</a>.</li>
+          </ul>
+        </article>
+
+        <article class="reveal">
+          <span>Vehicle imagery</span>
+          <strong>Indian car images used in the demo</strong>
+          <ul>
+            <li><a href="https://commons.wikimedia.org/wiki/File:Maruti_Suzuki_Swift_4456.JPG" target="_blank" rel="noreferrer">Maruti Suzuki Swift - Wikimedia Commons</a>.</li>
+            <li><a href="https://commons.wikimedia.org/wiki/File:Hyundai_Creta_India.jpg" target="_blank" rel="noreferrer">Hyundai Creta India - Wikimedia Commons</a>.</li>
+            <li><a href="https://commons.wikimedia.org/wiki/File:Tata_Nexon_Blue_Dual_Tone.jpg" target="_blank" rel="noreferrer">Tata Nexon Blue Dual Tone - Wikimedia Commons</a>.</li>
+            <li><a href="https://commons.wikimedia.org/wiki/File:2021_Mahindra_XUV700_2.2_AX7_(India)_front_view.png" target="_blank" rel="noreferrer">Mahindra XUV700 - Wikimedia Commons</a>.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <strong>Flex<span>Mind</span></strong>
+      <p>AI-based multi-objective ECU calibration for dual-fuel internal combustion engines.</p>
+    </div>
+    <p>Crafted by Prakhar Bhatnagar under guidance of Dr. N. N. Das.</p>
+  </footer>
+
+  <script src="script.js?v=cursor-reactive"></script>
+</body>
+</html>
