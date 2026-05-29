@@ -171,3 +171,5 @@ This project is intended for academic and research purposes.
 ---
 
 ### Made by Prakhar Bhatnagar
+Built with ❤️ for Automotive AI Research
+
