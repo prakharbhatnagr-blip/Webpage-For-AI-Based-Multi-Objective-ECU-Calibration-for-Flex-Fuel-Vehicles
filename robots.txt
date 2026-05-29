@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://prakharbhatnagr-blip.github.io/Webpage-For-AI-Based-Multi-Objective-ECU-Calibration-for-Flex-Fuel-Vehicles/sitemap.xml
